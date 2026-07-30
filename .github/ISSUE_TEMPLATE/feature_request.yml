@@ -1,0 +1,24 @@
+name: Engineering enhancement
+description: Propose a simulation, algorithm, or UX improvement
+title: "[Enhancement]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Engineering problem
+      description: Which learning, analysis, or comparison task is difficult today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the desired model, UI behavior, or experiment.
+    validations:
+      required: true
+  - type: textarea
+    id: assumptions
+    attributes:
+      label: Assumptions and references
+      description: State any conceptual simplifications, equations, standards, papers, or relay behavior that should guide the implementation.
