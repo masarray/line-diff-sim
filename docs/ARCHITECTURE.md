@@ -2,7 +2,7 @@
 
 ## Design goals
 
-The simulator is designed for teaching and algorithm comparison rather than dashboard reporting. The UI keeps disturbances, waveforms, communications, confidence, state transitions, and protection output visible in one coherent screen.
+The simulator is designed for teaching and algorithm comparison rather than dashboard reporting. The UI keeps disturbances, phase-locked waveforms, communications, confidence, state transitions, protection decisions, and the resulting virtual relay action visible as one cause-and-effect chain.
 
 ## Simulation loop
 
@@ -47,9 +47,33 @@ The engine calculates one-cycle RMS values for `Idiff`, raw `Idiff`, and `Ibias`
 
 Scenario event windows are deterministic, allowing the oscilloscope, RMS calculation, operate decision, and test suite to refer to the same active-event state.
 
+## Virtual relay and trip memory
+
+`src/lib/relay/relayLatch.ts` is a pure state model separate from the React faceplate. The first permitted `operate` transition stores a relay target containing:
+
+- trip time;
+- validated `Idiff` and `Ibias`;
+- alignment residual;
+- algorithm mode;
+- electrical scenario;
+- reason codes;
+- valid internal-fault or unwanted-operation classification.
+
+The memory remains latched when the operate condition clears. A manual reset request is rejected while `operate` remains active, mirroring the practical expectation that a protection target cannot be meaningfully cleared while its initiating condition is still present.
+
+`src/components/lab/VirtualRelay.tsx` maps current simulation state and retained trip memory into a generic vendor-neutral relay faceplate. The visual output path follows `87L pickup → permission → 86 latch → 52 breaker`. This explicitly distinguishes three outcomes:
+
+- **Valid fault trip:** an active internal-fault event completes the output path.
+- **Maltrip/unwanted operation:** a non-internal scenario completes the output path.
+- **Trip prevented:** pickup is visible, but permission blocks the output before the latch and breaker.
+
+The paired Maltrip Demo and Smart Corrected presets use the same through-load and path-asymmetry conditions so the user can compare the waveform, differential quantity, permission decision, and physical relay response without changing multiple controls manually.
+
 ## Regression tests
 
-`tests/engine.test.ts` checks long-duration advancement, healthy smart-mode startup, asymmetric-path correction, sustained loss blocking, internal/external fault discrimination, event timing, stationary phase reference, and event-driven scope changes. GitHub Actions runs these checks on pull requests before any Pages deployment can reach `main`.
+`tests/engine.test.ts` checks long-duration advancement, healthy smart-mode startup, asymmetric-path correction, sustained loss blocking, internal/external fault discrimination, event timing, stationary phase reference, and event-driven scope changes.
+
+`tests/relayLatch.test.ts` checks valid/unwanted trip classification, retained targets, reset inhibition, trip-prevention presentation, and the contrasting outcomes of the Maltrip Demo and Smart Corrected presets. GitHub Actions runs all checks on pull requests before any Pages deployment can reach `main`.
 
 ## Static hosting
 
