@@ -3,6 +3,7 @@ import { CommTimeline } from "@/components/lab/CommTimeline";
 import { CommandBar } from "@/components/lab/CommandBar";
 import { ConfidenceRail } from "@/components/lab/ConfidenceRail";
 import { DisturbanceRail } from "@/components/lab/DisturbanceRail";
+import { VirtualRelay } from "@/components/lab/VirtualRelay";
 import { WaveformLane } from "@/components/lab/WaveformLane";
 import { PICKUP_PU } from "@/lib/sim/engine";
 import { useSimulation } from "@/lib/sim/useSimulation";
@@ -30,7 +31,7 @@ export function App() {
   );
 
   return (
-    <main className="flex min-h-screen w-full flex-col gap-1.5 bg-background p-1.5 lg:h-screen lg:overflow-hidden">
+    <main className="flex min-h-screen w-full flex-col gap-1.5 bg-background p-1.5 xl:h-screen xl:overflow-hidden">
       <CommandBar
         mode={params.mode}
         scenario={params.scenario}
@@ -51,7 +52,7 @@ export function App() {
         eventActive={snap.eventActive}
       />
 
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-1.5 lg:grid-cols-[210px_minmax(0,1fr)_270px]">
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-1.5 lg:grid-cols-[200px_minmax(0,1fr)_232px] xl:grid-cols-[200px_minmax(0,1fr)_232px_270px]">
         <div className="hidden min-h-0 lg:block">
           <DisturbanceRail params={params} setParams={sim.setParams} />
         </div>
@@ -101,6 +102,10 @@ export function App() {
         </div>
 
         <div className="min-h-0">
+          <VirtualRelay snapshot={snap} params={params} running={sim.running} />
+        </div>
+
+        <div className="min-h-0 lg:col-span-3 xl:col-span-1">
           <ConfidenceRail snap={snap} events={sim.engine.events} />
         </div>
       </div>
@@ -111,7 +116,7 @@ export function App() {
 
       <footer className="flex flex-wrap justify-between gap-x-4 px-1 font-mono text-[9px] text-muted-foreground">
         <span>Educational &amp; algorithm-research simulator — not a field-certified protection relay.</span>
-        <span>GPL-3.0 · Phase-locked oscilloscope display</span>
+        <span>GPL-3.0 · Phase-locked scope · Latched virtual relay target</span>
       </footer>
     </main>
   );
