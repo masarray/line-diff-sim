@@ -47,6 +47,7 @@ export interface Confidence {
 
 export interface SimSnapshot {
   t: number;
+  eventActive: boolean;
   state: PermissionState;
   secureRemainingMs: number;
   confidence: Confidence;

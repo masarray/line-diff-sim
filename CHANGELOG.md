@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented here.
 
+## Unreleased
+
+- Corrected packet reception, burst-loss, corruption, packet-age, and gap counting behavior.
+- Removed the 0.625-second limit that silently truncated long simulation advances.
+- Prevented false RTT-step detection during healthy startup.
+- Improved smart waveform tracking initialization, search bounds, recovery, and asymmetric-path handling.
+- Corrected operate-event logging and added explicit electrical-event state.
+- Ensured the phase-locked scope reflects the current fault state while remaining stationary on the time axis.
+- Stopped continuous scope redraws while paused and made single-step automatically hold the simulation.
+- Added deterministic engine regression tests and pull-request quality checks.
+- Improved control semantics, timeline bounds, accessibility, and repository documentation.
+
 ## 1.0.0 — 2026-07-30
 
 - Removed all platform-specific generator configuration, metadata, telemetry, and runtime files.

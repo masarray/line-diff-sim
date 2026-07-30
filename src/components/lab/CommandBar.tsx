@@ -1,5 +1,9 @@
 import type { ChangeEvent } from "react";
-import type { AlgoMode, ElectricalScenario, PermissionState } from "@/lib/sim/types";
+import type {
+  AlgoMode,
+  ElectricalScenario,
+  PermissionState,
+} from "@/lib/sim/types";
 
 const MODES: { id: AlgoMode; label: string }[] = [
   { id: "A", label: "A · Conventional Ping-Pong" },
@@ -28,18 +32,19 @@ const stateColor: Record<PermissionState, string> = {
 interface Props {
   mode: AlgoMode;
   scenario: ElectricalScenario;
-  onMode: (m: AlgoMode) => void;
-  onScenario: (s: ElectricalScenario) => void;
+  onMode: (mode: AlgoMode) => void;
+  onScenario: (scenario: ElectricalScenario) => void;
   running: boolean;
   onRun: () => void;
   onStep: () => void;
   onReset: () => void;
   speed: number;
-  onSpeed: (v: number) => void;
+  onSpeed: (speed: number) => void;
   simTime: number;
   state: PermissionState;
   secureMs: number;
   operate: boolean;
+  eventActive: boolean;
 }
 
 export function CommandBar(props: Props) {
@@ -56,49 +61,56 @@ export function CommandBar(props: Props) {
       </div>
 
       <div className="flex items-center gap-1 rounded-sm border border-border bg-secondary/40 p-0.5">
-        {MODES.map((m) => (
+        {MODES.map((mode) => (
           <button
-            key={m.id}
-            onClick={() => props.onMode(m.id)}
+            key={mode.id}
+            type="button"
+            aria-pressed={props.mode === mode.id}
+            onClick={() => props.onMode(mode.id)}
             className={`rounded-[3px] px-2 py-1 font-mono text-[10px] tracking-wide transition-colors ${
-              props.mode === m.id
+              props.mode === mode.id
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            {m.label}
+            {mode.label}
           </button>
         ))}
       </div>
 
       <select
+        aria-label="Electrical scenario"
         value={props.scenario}
         onChange={(event: ChangeEvent<HTMLSelectElement>) =>
           props.onScenario(event.target.value as ElectricalScenario)
         }
         className="rounded-sm border border-border bg-secondary/40 px-2 py-1 font-mono text-[10px] text-foreground"
       >
-        {SCENARIOS.map((s) => (
-          <option key={s.id} value={s.id}>
-            {s.label}
+        {SCENARIOS.map((scenario) => (
+          <option key={scenario.id} value={scenario.id}>
+            {scenario.label}
           </option>
         ))}
       </select>
 
       <div className="flex items-center gap-1">
         <button
+          type="button"
+          aria-pressed={props.running}
           onClick={props.onRun}
           className="rounded-sm border border-border bg-secondary/40 px-2.5 py-1 font-mono text-[10px] tracking-wide hover:bg-accent"
         >
           {props.running ? "PAUSE" : "RUN"}
         </button>
         <button
+          type="button"
           onClick={props.onStep}
           className="rounded-sm border border-border bg-secondary/40 px-2.5 py-1 font-mono text-[10px] tracking-wide hover:bg-accent"
         >
           STEP
         </button>
         <button
+          type="button"
           onClick={props.onReset}
           className="rounded-sm border border-border bg-secondary/40 px-2.5 py-1 font-mono text-[10px] tracking-wide hover:bg-accent"
         >
@@ -128,6 +140,11 @@ export function CommandBar(props: Props) {
         <span className="font-mono text-[10px] text-muted-foreground">
           t = {props.simTime.toFixed(3)} s
         </span>
+        {props.eventActive && (
+          <span className="rounded-sm border border-primary/60 bg-primary/10 px-2 py-1 font-mono text-[10px] font-semibold tracking-widest text-primary">
+            EVENT ACTIVE
+          </span>
+        )}
         {props.operate && (
           <span className="rounded-sm border border-danger/60 bg-danger/20 px-2 py-1 font-mono text-[10px] font-semibold tracking-widest text-danger">
             87L OPERATE

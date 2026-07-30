@@ -4,6 +4,7 @@ import { CommandBar } from "@/components/lab/CommandBar";
 import { ConfidenceRail } from "@/components/lab/ConfidenceRail";
 import { DisturbanceRail } from "@/components/lab/DisturbanceRail";
 import { WaveformLane } from "@/components/lab/WaveformLane";
+import { PICKUP_PU } from "@/lib/sim/engine";
 import { useSimulation } from "@/lib/sim/useSimulation";
 
 export function App() {
@@ -47,6 +48,7 @@ export function App() {
         state={snap.state}
         secureMs={snap.secureRemainingMs}
         operate={snap.operate}
+        eventActive={snap.eventActive}
       />
 
       <div className="grid min-h-0 flex-1 grid-cols-1 gap-1.5 lg:grid-cols-[210px_minmax(0,1fr)_270px]">
@@ -85,14 +87,14 @@ export function App() {
             />
             <WaveformLane
               title="Idiff / Ibias"
-              subtitle="raw (dashed) · validated (solid) · pickup 0.25 pu"
+              subtitle={`raw (dashed) · validated (solid) · pickup ${PICKUP_PU.toFixed(2)} pu`}
               traces={traces}
               series={laneSeries.diff}
               scale={2.5}
               zeroCenter={false}
               height={0}
               tick={sim.tick}
-              threshold={0.25}
+              threshold={PICKUP_PU}
             />
           </div>
           <CommTimeline snap={snap} />

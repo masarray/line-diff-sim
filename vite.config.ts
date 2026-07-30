@@ -4,8 +4,8 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
-  // Relative assets allow the same build to work at a GitHub Pages project path
-  // such as https://owner.github.io/line-diff-lab/ and in local preview.
+  // Relative assets keep local preview and the GitHub Pages project path
+  // https://masarray.github.io/line-diff-sim/ on the same static build.
   base: "./",
   plugins: [react(), tailwindcss(), tsconfigPaths()],
   build: {

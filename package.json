@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "test": "node --experimental-strip-types --test tests/engine.test.ts",
     "preview": "vite preview",
     "lint": "eslint . --max-warnings=0",
     "format": "prettier --write .",

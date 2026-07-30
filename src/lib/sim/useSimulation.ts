@@ -13,17 +13,22 @@ export function useSimulation() {
   const [snapshot, setSnapshot] = useState<SimSnapshot>(engine.snapshot);
   const [tick, setTick] = useState(0);
 
+  const publishSnapshot = useCallback(() => {
+    setSnapshot({ ...engine.snapshot });
+    setTick((current) => current + 1);
+  }, [engine]);
+
   const setParams = useCallback(
-    (updater: SimParams | ((p: SimParams) => SimParams)) => {
-      setParamsState((prev) => {
-        const next = typeof updater === "function" ? updater(prev) : updater;
+    (updater: SimParams | ((params: SimParams) => SimParams)) => {
+      setParamsState((previous) => {
+        const next =
+          typeof updater === "function" ? updater(previous) : updater;
         engine.params = next;
         return next;
       });
-      setSnapshot({ ...engine.snapshot });
-      setTick((current) => current + 1);
+      publishSnapshot();
     },
-    [engine],
+    [engine, publishSnapshot],
   );
 
   useEffect(() => {
@@ -31,36 +36,40 @@ export function useSimulation() {
   }, [engine, params]);
 
   useEffect(() => {
-    let raf = 0;
-    let last = performance.now();
-    let acc = 0;
+    let animationFrame = 0;
+    let previousTime = performance.now();
+    let presentationAccumulator = 0;
+
     const loop = (now: number) => {
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
-      if (running) engine.advance(dt * speed);
-      acc += dt;
-      if (acc > 0.05) {
-        acc = 0;
-        setSnapshot({ ...engine.snapshot });
-        setTick((t) => t + 1);
+      const elapsedSeconds = Math.min(0.05, (now - previousTime) / 1000);
+      previousTime = now;
+
+      if (running) {
+        engine.advance(elapsedSeconds * speed);
+        presentationAccumulator += elapsedSeconds;
+        if (presentationAccumulator >= 0.05) {
+          presentationAccumulator = 0;
+          publishSnapshot();
+        }
       }
-      raf = requestAnimationFrame(loop);
+
+      animationFrame = requestAnimationFrame(loop);
     };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
-  }, [engine, running, speed]);
+
+    animationFrame = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [engine, publishSnapshot, running, speed]);
 
   const stepOnce = useCallback(() => {
+    setRunning(false);
     engine.advance(0.002);
-    setSnapshot({ ...engine.snapshot });
-    setTick((t) => t + 1);
-  }, [engine]);
+    publishSnapshot();
+  }, [engine, publishSnapshot]);
 
   const reset = useCallback(() => {
     engine.reset();
-    setSnapshot({ ...engine.snapshot });
-    setTick((t) => t + 1);
-  }, [engine]);
+    publishSnapshot();
+  }, [engine, publishSnapshot]);
 
   return {
     engine,

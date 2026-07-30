@@ -11,7 +11,7 @@ function Bar({
   note: string;
   invert?: boolean;
 }) {
-  const percentage = Math.round(value * 100);
+  const percentage = Math.max(0, Math.min(100, Math.round(value * 100)));
   const good = invert ? percentage < 50 : percentage >= 85;
   const medium = invert ? percentage < 75 : percentage >= 60;
   const color = good ? "bg-ok" : medium ? "bg-warn" : "bg-danger";
@@ -25,7 +25,14 @@ function Bar({
           {percentage}%
         </span>
       </div>
-      <div className="mt-1 h-[3px] w-full overflow-hidden rounded-full bg-grid">
+      <div
+        className="mt-1 h-[3px] w-full overflow-hidden rounded-full bg-grid"
+        role="progressbar"
+        aria-label={`${label} confidence`}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={percentage}
+      >
         <div
           className={`h-full ${color} transition-[width] duration-150`}
           style={{ width: `${percentage}%` }}
@@ -103,6 +110,11 @@ export function ConfidenceRail({
       <div className="flex min-h-0 flex-1 flex-col">
         <div className="label-xs px-2 pt-1.5">Event timeline</div>
         <div className="min-h-0 flex-1 overflow-y-auto px-2 pb-2">
+          {events.length === 0 && (
+            <div className="py-2 font-mono text-[9px] text-muted-foreground">
+              No state transition or operate event yet.
+            </div>
+          )}
           {events.map((event, index) => (
             <div
               key={`${event.t}-${event.label}-${index}`}
