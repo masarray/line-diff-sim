@@ -72,8 +72,11 @@ export function DisturbanceRail({
           {presets.map((preset) => (
             <button
               key={preset.id}
+              type="button"
               title={preset.desc}
-              onClick={() => setParams((previous) => applyPreset(previous, preset))}
+              onClick={() =>
+                setParams((previous) => applyPreset(previous, preset))
+              }
               className="rounded-sm border border-border bg-secondary/30 px-1.5 py-1 text-left font-mono text-[9.5px] leading-tight tracking-wide text-muted-foreground transition-colors hover:border-primary/60 hover:text-foreground"
             >
               {preset.name.toUpperCase()}
@@ -102,7 +105,7 @@ export function DisturbanceRail({
           onChange={set("returnDelayMs")}
         />
         <Slider
-          label="Jitter (RMS)"
+          label="Jitter bound"
           value={params.jitterMs}
           min={0}
           max={10}
@@ -152,26 +155,30 @@ export function DisturbanceRail({
         <Slider
           label="Clock drift"
           value={params.clockDriftPpm}
-          min={0}
+          min={-200}
           max={200}
           step={5}
           unit="ppm"
           onChange={set("clockDriftPpm")}
         />
         <div className="flex gap-1 px-2 py-1">
-          {(["VALID", "DEGRADED", "INVALID"] as SyncQuality[]).map((quality) => (
-            <button
-              key={quality}
-              onClick={() => set("syncQuality")(quality)}
-              className={`flex-1 rounded-sm border px-1 py-1 font-mono text-[9px] tracking-wide transition-colors ${
-                params.syncQuality === quality
-                  ? "border-primary/70 bg-primary/15 text-primary"
-                  : "border-border bg-secondary/30 text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {quality}
-            </button>
-          ))}
+          {(["VALID", "DEGRADED", "INVALID"] as SyncQuality[]).map(
+            (quality) => (
+              <button
+                key={quality}
+                type="button"
+                aria-pressed={params.syncQuality === quality}
+                onClick={() => set("syncQuality")(quality)}
+                className={`flex-1 rounded-sm border px-1 py-1 font-mono text-[9px] tracking-wide transition-colors ${
+                  params.syncQuality === quality
+                    ? "border-primary/70 bg-primary/15 text-primary"
+                    : "border-border bg-secondary/30 text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {quality}
+              </button>
+            ),
+          )}
         </div>
       </Section>
 

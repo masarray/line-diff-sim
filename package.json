@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "test": "node --experimental-strip-types --test tests/engine.test.ts",
     "preview": "vite preview",
     "lint": "eslint . --max-warnings=0",
     "format": "prettier --write .",
@@ -32,7 +33,7 @@
     "prettier": "3.7.3",
     "typescript": "5.8.3",
     "typescript-eslint": "8.56.1",
-    "vite": "8.1.5",
+    "vite": "7.2.4",
     "vite-tsconfig-paths": "6.0.2"
   },
   "packageManager": "npm@10.9.2",

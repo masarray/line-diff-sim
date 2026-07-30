@@ -2,9 +2,11 @@ import type { SimSnapshot } from "@/lib/sim/types";
 
 export function CommTimeline({ snap }: { snap: SimSnapshot }) {
   const total = Math.max(1, snap.rttMs);
-  const fwdPct = (snap.trueForwardMs / total) * 100;
-  const retPct = (snap.trueReturnMs / total) * 100;
-  const estPct = (snap.estOneWayMs / total) * 100;
+  const forwardPercent = (snap.trueForwardMs / total) * 100;
+  const returnPercent = (snap.trueReturnMs / total) * 100;
+  const estimatePercent = (snap.estOneWayMs / total) * 100;
+  const markerPercent = Math.max(0, Math.min(100, estimatePercent));
+  const labelPercent = Math.max(3, Math.min(97, estimatePercent));
 
   return (
     <section className="panel px-3 py-2">
@@ -36,13 +38,13 @@ export function CommTimeline({ snap }: { snap: SimSnapshot }) {
       <div className="mt-2 flex h-4 w-full items-stretch overflow-hidden rounded-sm border border-border">
         <div
           className="flex items-center justify-center bg-lane-local/25 font-mono text-[9px] text-lane-local"
-          style={{ width: `${fwdPct}%` }}
+          style={{ width: `${forwardPercent}%` }}
         >
           FWD {snap.trueForwardMs.toFixed(1)}
         </div>
         <div
           className="flex items-center justify-center bg-lane-remote/25 font-mono text-[9px] text-lane-remote"
-          style={{ width: `${retPct}%` }}
+          style={{ width: `${returnPercent}%` }}
         >
           RET {snap.trueReturnMs.toFixed(1)}
         </div>
@@ -50,11 +52,11 @@ export function CommTimeline({ snap }: { snap: SimSnapshot }) {
       <div className="relative mt-1 h-3">
         <div
           className="absolute top-0 h-3 w-px bg-primary"
-          style={{ left: `${Math.min(100, estPct)}%` }}
+          style={{ left: `${markerPercent}%` }}
         />
         <span
           className="absolute top-0 -translate-x-1/2 font-mono text-[9px] text-primary"
-          style={{ left: `${Math.min(97, estPct)}%` }}
+          style={{ left: `${labelPercent}%` }}
         >
           ▲ alignment estimate
         </span>

@@ -4,15 +4,18 @@ A browser-based **87L line differential protection laboratory** for education, a
 
 The interface is intentionally compact and industrial: the complete cause-and-effect chain is visible on a typical laptop screen without dashboard-style cards or long scrolling.
 
+**Live simulator:** https://masarray.github.io/line-diff-sim/
+
 ## Key capabilities
 
 - Compare four line-differential alignment and security strategies side by side.
-- Inject asymmetric delay, bounded jitter, packet loss, corruption, RTT route steps, clock offset, and clock drift.
+- Inject asymmetric delay, bounded jitter, packet loss, corruption, RTT route steps, clock offset, and positive or negative clock drift.
 - Explore through-load, load-change, external-fault, internal-fault, CT saturation, and CT polarity scenarios.
 - Observe channel, alignment, waveform, and electrical-event confidence.
 - Follow permission-state transitions: `NORMAL`, `WATCH`, `SECURE`, `BLOCKED`, and `RECOVERY`.
 - Inspect raw and validated `Idiff`, `Ibias`, operate status, reason codes, and event history.
 - Use a **phase-locked oscilloscope display**: the waveform does not scroll horizontally. Its fixed four-cycle sweep makes event-driven changes in magnitude, phase, distortion, and alignment easier to compare.
+- Pause the simulation to retain a stable engineering snapshot without continuous redraws.
 
 ## Safety and engineering scope
 
@@ -26,8 +29,8 @@ Requirements:
 - npm 10 or newer
 
 ```bash
-git clone https://github.com/<your-account>/line-diff-lab.git
-cd line-diff-lab
+git clone https://github.com/masarray/line-diff-sim.git
+cd line-diff-sim
 npm install
 npm run dev
 ```
@@ -39,8 +42,11 @@ Open the local URL printed by Vite.
 ```bash
 npm run typecheck
 npm run lint
+npm test
 npm run build
 ```
+
+The deterministic engine regression suite covers healthy startup, asymmetric communication paths, packet loss security, internal/external fault discrimination, event timing, complete time advancement, and phase-locked oscilloscope behavior.
 
 The production output is generated in `dist/` as a fully static site.
 
@@ -48,20 +54,23 @@ The production output is generated in `dist/` as a fully static site.
 
 The repository includes `.github/workflows/deploy-pages.yml`.
 
-1. Push the project to a public GitHub repository.
-2. Open **Settings → Pages**.
-3. Under **Build and deployment**, select **GitHub Actions**.
-4. Push to the `main` branch or run the workflow manually.
+1. Open **Settings → Pages**.
+2. Under **Build and deployment**, select **GitHub Actions**.
+3. Push to the `main` branch or run the workflow manually.
 
-Vite uses relative asset paths, so the same build works for both user/organization pages and project pages such as `https://owner.github.io/line-diff-lab/`.
+Pull requests run type checking, linting, regression tests, and a production build without deploying. A successful `main` build deploys the static site to `https://masarray.github.io/line-diff-sim/`.
+
+Vite uses relative asset paths, so the same build also works from another GitHub Pages project repository.
 
 ## Architecture
 
 The application is a client-only React + TypeScript simulation:
 
-- `src/lib/sim/engine.ts` — deterministic real-time simulation engine, confidence model, state machine, protection characteristic, and phase-locked scope frame.
+- `src/lib/sim/engineCore.ts` — deterministic simulation engine, packet model, confidence model, state machine, and protection characteristic.
+- `src/lib/sim/engine.ts` — public engine surface and phase-locked oscilloscope frame.
 - `src/lib/sim/useSimulation.ts` — animation scheduling and React state bridge.
 - `src/components/lab/` — compact industrial controls and visualization.
+- `tests/engine.test.ts` — deterministic behavior and regression checks.
 - `src/App.tsx` — single-screen laboratory composition.
 
 More detail is available in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
