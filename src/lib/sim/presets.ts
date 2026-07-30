@@ -1,5 +1,5 @@
-import { defaultParams } from "./engine";
-import type { SimParams } from "./types";
+import { defaultParams } from "./engine.ts";
+import type { SimParams } from "./types.ts";
 
 export interface Preset {
   id: string;
