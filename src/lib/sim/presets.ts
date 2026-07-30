@@ -1,5 +1,5 @@
-import { defaultParams } from "./engine";
-import type { SimParams } from "./types";
+import { defaultParams } from "./engine.ts";
+import type { SimParams } from "./types.ts";
 
 export interface Preset {
   id: string;
@@ -21,6 +21,38 @@ export const presets: Preset[] = [
       corruptionPct: 0,
       rttStepMs: 0,
       syncQuality: "VALID",
+    },
+  },
+  {
+    id: "maltrip",
+    name: "Maltrip Demo",
+    desc: "Mode A through-load with severe path asymmetry",
+    params: {
+      mode: "A",
+      scenario: "THROUGH_LOAD",
+      forwardDelayMs: 12,
+      returnDelayMs: 3,
+      jitterMs: 0,
+      packetLossPct: 0,
+      corruptionPct: 0,
+      rttStepMs: 0,
+      remoteMagnitudePct: 100,
+    },
+  },
+  {
+    id: "smart-corrected",
+    name: "Smart Corrected",
+    desc: "Same asymmetric through-load corrected by mode D",
+    params: {
+      mode: "D",
+      scenario: "THROUGH_LOAD",
+      forwardDelayMs: 12,
+      returnDelayMs: 3,
+      jitterMs: 0,
+      packetLossPct: 0,
+      corruptionPct: 0,
+      rttStepMs: 0,
+      remoteMagnitudePct: 100,
     },
   },
   {
